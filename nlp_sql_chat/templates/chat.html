@@ -1,0 +1,145 @@
+<html>
+    {% load nvd3_tags %}
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    
+    {% include_chart_jscss %}
+    {% load_chart charttype chartdata chartcontainer extra %}
+    
+</head>
+
+<body ng-app>
+    
+<div class="container">
+    <div class="page-header">
+        <h1>Chat With Data <small >Simple english bro!</small></h1>
+    </div>   
+  <div class="row">
+    <div class="col-lg-6" style="border: 1px solid #e1e4e7; margin-top: 50px">
+        <div class="panel panel-default" style="margin: -15px" >
+
+        {% if connected %}
+            <div class="alert alert-success" role="alert"><b>Connected!</b> To Database at <b></b>{{address}}
+            <form action="/" method="POST" style="float: right; margin-top: -7px;">
+                {% csrf_token %}
+                <input type="hidden" name="_method" value="disconnect" />
+                <button type="submit" style="background-color: #FF0000;color: #fff"  class="btn btn-default">Disconnect!</button>
+            </form>
+            
+            </div>
+        Tables available are :
+        {% for table in tables %}
+        
+        <button style="margin:2px 2px 2px 5px;" type="button" data-placement="bottom" class="btn btn-sm btn-success" data-toggle="popover" title="" data-content="{{table.columns}}" data-original-title="Coloumns in {{table.name}}">{{table.name}}</button>
+        
+        {% endfor %}
+        {% else %}
+        <div class="alert alert-warning" role="alert"><b>Warning!</b> Better check connection! <b>Not Connected</b></div>
+        {% endif %}
+        <form action="/" method="POST">
+            {% csrf_token %}
+            
+                {% if stage != '0'%}
+                <div class="input-group col-lg-10" style ="margin: 10px">
+                    <span class="input-group-addon">
+                      <input type="radio" name="chart">
+                    </span> 
+                    <text type="text" class="form-control disabled">Chart</text>
+                    <span class="input-group-addon">
+                      <input type="radio" name="query">
+                    </span> 
+                    <text type="text" class="form-control disabled">Query</text>
+                  </div><!-- /input-group -->
+                  
+                  {% endif %}
+                  
+                  <div class="input-group" style ="margin: 10px">
+                    <input name="message" type="text" style = "height : 50px" class="form-control" placeholder="Your message goes here....">
+                    <span class="input-group-btn">
+                      <input class="btn btn-default" style = "height : 50px" type="submit">Go!</input>
+                    </span>
+                  </div><!-- /input-group -->
+  
+              
+           
+        </form>
+    
+                </div>
+        {% if chart%}
+            {{operation}}
+            <div style="margin-top: 50px">
+
+                        {% include_container chartcontainer  %}
+            </div>
+        {% endif %}
+        {% if query %}
+            <div style="margin-top: 50px">
+
+                        {{ table_content | safe }}
+            </div>
+        {% endif %}
+
+    </div>
+    <div class="col-lg-6" style=" margin-top: 50px">
+        <div class="panel panel-default" style="margin: -15px" >
+            <div class="panel-heading">
+              <h3 class="panel-title">HelpBox</h3>
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-pills" role="tablist">
+                   <li role="presentation" ng-click = "tab=connect" ><a href="#">Connect </a></li>
+                   <li role="presentation" ng-click = "tab='query'" ><a href="#">Query</a></li>
+                   <li role="presentation" ng-click = "tab='plot'" ><a href="#">Plot</a></li>  
+               </ul>
+            </div>
+            <div ng-show="tab==connect" style="border: 1px solid #e1e4e7; margin-left: 5px ; margin-right: 5px;margin-bottom: 10px " >
+                <ul class="list-group">
+                    <li class="list-group-item">connect to postgres at <b><i>127.0.0.1</i></b> at port <b><i>5432</i></b> with username = "<b><i>mit_dev</i></b>" and password = "<b><i>mit_platform</i></b>" and database = "<b><i>mit</i></b>"</li>
+                    <li class="list-group-item">Dapibus ac facilisis in</li>
+                    <li class="list-group-item">Morbi leo risus</li>
+                    <li class="list-group-item">Porta ac consectetur ac</li>
+                    <li class="list-group-item">Vestibulum at eros</li> 
+               </ul>
+            </div>
+            <div ng-show="tab=='query'"  style="border: 1px solid #e1e4e7; margin-left: 5px ; margin-right: 5px;margin-bottom: 10px " >
+                <ul class="list-group">
+                    <li class="list-group-item">show all coulumns of table = "<b><i>user_group</i></b>" </li>
+                    <li class="list-group-item">show top 5 data of table = "<b><i>user_group</i></b>"  </li>
+                    <li class="list-group-item">max of coulumn = "math_score" and table = "<b><i>score</i></b>" </li>
+                    <li class="list-group-item">Porta ac consectetur ac</li>
+                    <li class="list-group-item">Vestibulum at eros</li> 
+               </ul>
+            </div>
+             <div ng-show="tab=='plot'"  style="border: 1px solid #e1e4e7; margin-left: 5px ; margin-right: 5px;margin-bottom: 10px " >
+                
+                <ul class="list-group">
+                    <li class="list-group-item">plot pie chart from table  "<b><i>students</i></b>" </li>
+                    <li class="list-group-item">plot pie chart from table  "<b><i>fruits</i></b>" </li>
+                    <li class="list-group-item">plot pie chart from table  "<b><i>employee</i></b>" </li>
+                    <li class="list-group-item">Porta ac consectetur ac</li>
+                    <li class="list-group-item">Vestibulum at eros</li> 
+               </ul>
+            </div>
+          </div>
+        
+    </div>
+  </div>
+  
+</div>
+
+        
+        
+
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover();
+});
+</script>
+
+</body>
+</html>

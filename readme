@@ -1,0 +1,8 @@
+python connect.py '
+
+connect to postgres at 127.0.0.1 at port 5432 with username = "mit_dev" and password = "mit_platform" and database = "mit"
+
+'
+['connect', 'to', 'postgres', 'at', '127.0.0.1', 'at', 'port', '5432', 'with', 'username', '', '"mit_dev"', 'and', 'password', '', '"mit_platform"', 'and', 'database', '', '"mit"']
+
+
